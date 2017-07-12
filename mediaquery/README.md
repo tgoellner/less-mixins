@@ -16,6 +16,7 @@ Results in:
 	    }
 	}
 
+
 ### Available breakpoints
 You can use follwing predefined breakpoints (defined in the <code>@mq_widths</code> variable):
 
@@ -30,18 +31,29 @@ You can use follwing predefined breakpoints (defined in the <code>@mq_widths</co
 
 So <code>.mq(s)</code> will transpile into <code>@media (min-width: 30em) { }</code>
 
+
 ### Using max-width insteadt of min-width
 To use it with max-width you can prefix the breakpoint's name with a <code>max-</code>:
 
 <code>.mq(max-s)</code> will transpile into <code>@media (max-width: 29.999em) { }</code>
 
+You can also use the <code>.mq-min()</code> and <code>.mq-max()</code> mixins if you prefer:
+
+<code>.mq-min(s)</code> will transpile into <code>@media (min-width: 37.5em) { }</code>
+
+<code>.mq-max(s)</code> will transpile into <code>@media (max-width: 37.4999em) { }</code>
+
+
 ### Custom breakpoints
 You can also use any number as a breakpoint - keep in mind that it will
-be converted to EMs:
+be converted to EMs.:
 
 <code>.mq(600)</code> will transpile into <code>@media (min-width: 37.5em) { }</code>
 
-<code>.mq(max-600)</code> will transpile into <code>@media (min-width: 37.4999em) { }</code>
+You cannot use <code>min</code> or <code>max</code> prefixes when using numbers, instead you can use <code>.mq-min()</code> and <code>.mq-max()</code> (<code>.mq(NUMBER)</code> behaves like <code>.mq-min()</code>):
+
+<code>.mq-max(600)</code> will transpile into <code>@media (max-width: 37.4999em) { }</code>
+
 
 ### Other media queries
 To use any other query just provide it instead of a breakpoint:

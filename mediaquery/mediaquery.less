@@ -1,128 +1,85 @@
-/**
- * LESS MEDIA QUERY MIXIN
- * by Thomas Göllner
- * v1.0 / 2017-07-12
- *
- * Example usage:
- * <code>
- * .element {
- *     .mq(min-l, {
- *         background: #00ff00;
- *     }
- * }
- * </code>
- *
- * Results in:
- *
- * <code>
- * @media (min-width: 47.5em) {
- *     .element {
- *         background: #00ff00;
- *     }
- * }
- * </code>
- *
- * You can use follwing predefined breakpoints (defined in the @mq_widths variable):
- *
- * xs    / mobile           = 360px device width
- * s     / smart            = 480px device width
- * m     / mobile-landscape = 640px device width
- * l     / tablet           = 760px device width
- * xl    / tablet-landscape = 960px device width
- * xxl   / desktop          = 1180px device width
- * xxxl  / desktop-large    = 1600px device width
- * xxxxl / hd               = 1900px device width
- *
- * <code>.mq(s)</code> will transpile into <code>@media (min-width: 30em) { }</code>
- *
- * To use it with max-width you can prefix the breakpoint's name with a "max-":
- * <code>.mq(max-s)</code> will transpile into <code>@media (max-width: 29.999em) { }</code>
- *
- * You can also use any number as a breakpoint - keep in mind that it will
- * be converted to EMs:
- * <code>.mq(600)</code> will transpile into <code>@media (min-width: 37.5em) { }</code>
- * <code>.mq(max-600)</code> will transpile into <code>@media (min-width: 37.4999em) { }</code>
- *
- * To use any other query just provide it instead of a breakpoint:
- * <code>.mq(~"screen and (orientation: portrait)")</code> will transpile to <code>@media screen and (orientation: portrait) { }</code>
- *
- * As LESS combines multiple media queries into one you can nest them too:
- *
- * <code>
- * .element {
- *     .mq(min-l, {
- *         background: #00ff00;
- *         .mq(~"screen and (orientation: portrait)", {
- *              font-size: 12px;
- *         })
- *     }
- * }
- * </code>
- *
- * results in:
- *
- * <code>
- * @media (min-width: 47.5em) {
- *     .element {
- *         background: #00ff00;
- *     }
- * }
- * @media (min-width: 47.5em) and screen and (orientation: portrait) {
- *     .element {
- *         font-size: 12px;
- *     }
- * }
- * </code>
- */
-
 @mq_widths: 360, 480, 640, 760, 960, 1180, 1600, 1900;
 
 .mq(@query, @rules) {
 
     ._(@w, @minmax : 'min', @rules) {
-        & when not (@minmax = max) {
-            @media (min-width: ( unit(@w, em) * 0.0625 ) ) {
-                @rules();
+        & when ( isnumber(@w) ) {
+            & when not (@minmax = max) {
+                .mq-min(@w, @rules);
+            }
+            & when (@minmax = max) {
+                .mq-max(@w, @rules);
             }
         }
-        & when (@minmax = max) {
-            @media (max-width: ( unit(@w, em) * 0.0625 - 0.0001 ) ) {
-                @rules();
-            }
+        & when not ( isnumber(@w) ) {
+            error--invalid-width-for-not-media-query: @w;
         }
     }
 
-    & when not ( @query = replace(@query, "^(min|max)?-?(xs|mobile)$", "", "i")) {
-        ._(extract(@mq_widths, 1), replace(@query, "^(min|max)?-?(xs|mobile)$", "$1", "i"), { @rules(); } );
+    @mq : ~"@{query}";
+
+    & when not ( @mq = replace(@mq, "^(min|max)?-?(xs|mobile)$", "", "i")) {
+        ._(extract(@mq_widths, 1), replace(@mq, "^(min|max)?-?(xs|mobile)$", "$1", "i"), { @rules(); } );
     }
-    & when not ( @query = replace(@query, "^(min|max)?-?(s|smart)$", "", "i")) {
-        ._(extract(@mq_widths, 2), replace(@query, "^(min|max)?-?(s|smart)$", "$1", "i"), { @rules(); } );
+    & when not ( @mq = replace(@mq, "^(min|max)?-?(s|smart)$", "", "i")) {
+        ._(extract(@mq_widths, 2), replace(@mq, "^(min|max)?-?(s|smart)$", "$1", "i"), { @rules(); } );
     }
-    & when not ( @query = replace(@query, "^(min|max)?-?(m|mobile-landscape)$", "", "i")) {
-        ._(extract(@mq_widths, 3), replace(@query, "^(min|max)?-?(m|mobile-landscape)$", "$1", "i"), { @rules(); } );
+    & when not ( @mq = replace(@mq, "^(min|max)?-?(m|mobile-landscape)$", "", "i")) {
+        ._(extract(@mq_widths, 3), replace(@mq, "^(min|max)?-?(m|mobile-landscape)$", "$1", "i"), { @rules(); } );
     }
-    & when not ( @query = replace(@query, "^(min|max)?-?(l|tablet)$", "", "i")) {
-        ._(extract(@mq_widths, 4), replace(@query, "^(min|max)?-?(l|tablet)$", "$1", "i"), { @rules(); } );
+    & when not ( @mq = replace(@mq, "^(min|max)?-?(l|tablet)$", "", "i")) {
+        ._(extract(@mq_widths, 4), replace(@mq, "^(min|max)?-?(l|tablet)$", "$1", "i"), { @rules(); } );
     }
-    & when not ( @query = replace(@query, "^(min|max)?-?(xl|tablet-landscape)$", "", "i")) {
-        ._(extract(@mq_widths, 5), replace(@query, "^(min|max)?-?(xl|tablet-landscape)$", "$1", "i"), { @rules(); } );
+    & when not ( @mq = replace(@mq, "^(min|max)?-?(xl|tablet-landscape)$", "", "i")) {
+        ._(extract(@mq_widths, 5), replace(@mq, "^(min|max)?-?(xl|tablet-landscape)$", "$1", "i"), { @rules(); } );
     }
-    & when not ( @query = replace(@query, "^(min|max)?-?(xxl|desktop)$", "", "i")) {
-        ._(extract(@mq_widths, 6), replace(@query, "^(min|max)?-?(xxl|desktop)$", "$1", "i"), { @rules(); } );
+    & when not ( @mq = replace(@mq, "^(min|max)?-?(xxl|desktop)$", "", "i")) {
+        ._(extract(@mq_widths, 6), replace(@mq, "^(min|max)?-?(xxl|desktop)$", "$1", "i"), { @rules(); } );
     }
-    & when not ( @query = replace(@query, "^(min|max)?-?(xxxl|desktop-large)$", "", "i")) {
-        ._(extract(@mq_widths, 7), replace(@query, "^(min|max)?-?(xxxl|desktop-large)$", "$1", "i"), { @rules(); } );
+    & when not ( @mq = replace(@mq, "^(min|max)?-?(xxxl|desktop-large)$", "", "i")) {
+        ._(extract(@mq_widths, 7), replace(@mq, "^(min|max)?-?(xxxl|desktop-large)$", "$1", "i"), { @rules(); } );
     }
-    & when not ( @query = replace(@query, "^(min|max)?-?(xxxxl|hd)$", "", "i")) {
-        ._(extract(@mq_widths, 8), replace(@query, "^(min|max)?-?(xxxxl|hd)$", "$1", "i"), { @rules(); } );
-    }
-    & when not ( @query = replace(@query, "^(min|max)?-?([^0-9]{1,})$", "", "i")) {
-        ._(replace(@query, "^(min|max)?-?([^0-9]{1,})$", "$2", "i"), replace(@query, "^(min|max)?-?([^0-9]{1,})$", "$1", "i"), { @rules(); } );
+    & when not ( @mq = replace(@mq, "^(min|max)?-?(xxxxl|hd)$", "", "i")) {
+        ._(extract(@mq_widths, 8), replace(@mq, "^(min|max)?-?(xxxxl|hd)$", "$1", "i"), { @rules(); } );
     }
 
-    & when ( @query = replace(@query, "^(min|max)?-?(x?s|m|x?x?x?x?l|mobile|smart|mobile-landscape|desktop|desktop-large|hd)$", "", "i")) {
-        @media @query {
+    & when (isnumber(@query)) {
+        ._(@query, min, @rules);
+    }
+
+    & when ( @mq = replace(@mq, "^(min|max)?-?(x?s|m|x?x?x?x?l|mobile|smart|mobile-landscape|desktop|desktop-large|hd|[0-9]{1,})$", "", "i")) {
+        testmatch: @mq replace(@mq, "^(min|max)?-?(x?s|m|x?x?x?x?l|mobile|smart|mobile-landscape|desktop|desktop-large|hd)$", "", "i");
+        @media @mq {
             @rules();
+        }
+    }
+}
+
+
+.mq-min(@w, @rules) {
+    & when ( isnumber(@w) ) {
+        @media (min-width: ( unit(@w, em) * 0.0625 ) ) {
+            @rules();
+        }
+    }
+    & when not ( isnumber(@w) ) {
+        @mq : ~"min-@{w}";
+        & when not ( @mq = replace(@mq, "^(min|max)?-?(x?s|m|x?x?x?x?l|mobile|smart|mobile-landscape|desktop|desktop-large|hd)$", "", "i")) {
+            .mq(@mq, @rules);
+        }
+    }
+}
+
+.mq-max(@w, @rules) {
+    & when ( isnumber(@w) ) {
+        @media (max-width: ( unit(@w, em) * 0.0625 - 0.0001 ) ) {
+            @rules();
+        }
+    }
+    & when not ( isnumber(@w) ) {
+        @mq : ~"max-@{w}";
+        & when not ( @mq = replace(@mq, "^(min|max)?-?(x?s|m|x?x?x?x?l|mobile|smart|mobile-landscape|desktop|desktop-large|hd)$", "", "i")) {
+            .mq(@mq, @rules);
         }
     }
 }
