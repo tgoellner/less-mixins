@@ -1,8 +1,8 @@
-#LESS MediaQuery mixin
-##v1.0
+# LESS MediaQuery mixin
+## v1.0
 This mixin helps you using CSS MediaQueries in your LESS files. You can chose from a set of predefined breakpoints to change your CSS layout when the browser reaches a minimum width ([Mobile First](https://web3canvas.com/what-is-mobile-first-responsive-design/)).
 
-###Example usage:
+### Example usage:
 	.element {
 	    .mq(min-l, {
 	        background: #00ff00;
